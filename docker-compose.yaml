@@ -1,34 +1,16 @@
 services:
-  ollama:
+  OpenWebUI:
+    image: ghcr.io/open-webui/open-webui:v0.5.14
+    container_name: OpenWebUI
     volumes:
-      - ollama:/root/.ollama
-    container_name: ollama
-    pull_policy: always
-    tty: true
-    restart: unless-stopped
-    image: ollama/ollama:${OLLAMA_DOCKER_TAG-latest}
-
-  open-webui:
-    build:
-      context: .
-      args:
-        OLLAMA_BASE_URL: '/ollama'
-      dockerfile: Dockerfile
-    image: ghcr.io/open-webui/open-webui:${WEBUI_DOCKER_TAG-main}
-    container_name: open-webui
-    volumes:
-      - open-webui:/app/backend/data
-    depends_on:
-      - ollama
+      - ./data:/app/backend/data
     ports:
-      - ${OPEN_WEBUI_PORT-3000}:8080
+      - 2021:8080
     environment:
-      - 'OLLAMA_BASE_URL=http://ollama:11434'
-      - 'WEBUI_SECRET_KEY='
-    extra_hosts:
-      - host.docker.internal:host-gateway
+      - 'OLLAMA_BASE_URL=http://192.168.2.202:11434'
+      - 'WEBUI_SECRET_KEY=jjnvidia4090'
+      - 'ENABLE_OPENAI_API=False'
+      - 'ENABLE_COMMUNITY_SHARING=False'
+      - 'RAG_EMBEDDING_ENGINE=openai'
+      - 'ENABLE_REALTIME_CHAT_SAVE=False'
     restart: unless-stopped
-
-volumes:
-  ollama: {}
-  open-webui: {}
